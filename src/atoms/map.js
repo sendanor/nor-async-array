@@ -7,31 +7,35 @@
 
 var _Q = require('q');
 
-/** Perform `f(i)` on each item in an array.
+/** Perform `f(i)` on each item in an array and build new array from results.
  * @param a {array} The data to perform operations
  * @param f {function} The function to call for each item
- * @returns Chainable promise which has all operations as members
+ * @returns Chainable promise of new array
  */
-function async_array_forEach(a, f) {
+function async_array_map(a, f) {
 	var defer = _Q.defer();
+	var step;
+
+	var a2 = new Array(a.length);
 	var l = a.length-1;
 	var i = l;
 	var ii = 0;
 
-	var step;
-
 	/** The actual work to do each tick */
 	function _step() {
 		if(i >= 0) {
+
 			/*jshint plusplus:false*/
 			ii = l-(i--);
-			_Q.when( f(a[ii], ii, a) ).then(function() {
+
+			_Q.when( f(a[ii], ii, a) ).then(function(r) {
+				a2[ii] = r;
 				process.nextTick(step);
 			}).fail(function(err) {
 				defer.reject(err);
 			}).done();
 		} else {
-			defer.resolve(a);
+			defer.resolve(a2);
 		}
 	}
 
@@ -51,6 +55,6 @@ function async_array_forEach(a, f) {
 }
 
 // Exports
-module.exports = async_array_forEach;
+module.exports = async_array_map;
 
 /* EOF */

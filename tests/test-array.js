@@ -39,21 +39,20 @@ describe('nor-array', function(){
 	describe('#map', function(){
 
 		/** Normal test */
-		it.skip('can be used to change and copy elements from a to b', function(){
+		it('can be used to change and copy elements from a to b', function(){
 			var a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
 			function step(v) {
 				return v+1;
 			}
 
-			var b = ARR(a).map(step).valueOf();
-
-			assert.strictEqual( a.length, b.length );
-			assert.strictEqual( a.length, 32 );
-
-			for(var i=0; i<32; i++) {
-				assert.strictEqual( a[i], b[i]-1 );
-			}
+			return ARR(a).map(step).then(function(b) {
+				assert.strictEqual( a.length, b.length );
+				assert.strictEqual( a.length, 32 );
+				for(var i=0; i<32; i++) {
+					assert.strictEqual( a[i], b[i]-1 );
+				}
+			});
 
 		});
 
