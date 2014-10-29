@@ -14,12 +14,25 @@ var _Q = require('q');
  */
 function async_array_map(a, f) {
 	var defer = _Q.defer();
+	var _immediate;
 	var step;
 
 	var a2 = new Array(a.length);
 	var l = a.length-1;
 	var i = l;
 	var ii = 0;
+
+	/** */
+	function _reject(err) {
+		clearImmediate(_immediate);
+		defer.reject(err);
+	}
+
+	/** */
+	function _resolve() {
+		clearImmediate(_immediate);
+		defer.resolve(a2);
+	}
 
 	/** The actual work to do each tick */
 	function _step() {
@@ -30,12 +43,10 @@ function async_array_map(a, f) {
 
 			_Q.when( f(a[ii], ii, a) ).then(function(r) {
 				a2[ii] = r;
-				process.nextTick(step);
-			}).fail(function(err) {
-				defer.reject(err);
-			}).done();
+				_immediate = setImmediate(step);
+			}).fail(_reject).done();
 		} else {
-			defer.resolve(a2);
+			_resolve();
 		}
 	}
 
@@ -44,12 +55,12 @@ function async_array_map(a, f) {
 		try {
 			_step();
 		} catch(err) {
-			defer.reject(err);
+			_reject(err);
 		}
 	};
 
 	// Let's start the loop in next tick
-	process.nextTick(step);
+	_immediate = setImmediate(step);
 
 	return defer.promise;
 }

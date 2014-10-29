@@ -7,19 +7,18 @@
 
 var _Q = require('q');
 
-/** Perform `f(i)` on each item in an array.
+/** Perform `f(i)` on each item in an array and build new array from results.
  * @param a {array} The data to perform operations
  * @param f {function} The function to call for each item
- * @returns Chainable promise which has all operations as members
+ * @returns Chainable promise of new array
  */
-function async_array_forEach(a, f) {
+function async_array_filter(a, f) {
 	var defer = _Q.defer();
 	var _immediate;
-	var l = a.length-1;
-	var i = l;
-	var ii = 0;
-
 	var step;
+
+	var a2 = new Array(a.length);
+	var l = a.length-1, i = l, ii = 0, n=0;
 
 	/** */
 	function _reject(err) {
@@ -29,16 +28,22 @@ function async_array_forEach(a, f) {
 
 	/** */
 	function _resolve() {
+		a2.length = n;
 		clearImmediate(_immediate);
-		defer.resolve(a);
+		defer.resolve(a2);
 	}
 
 	/** The actual work to do each tick */
 	function _step() {
 		if(i >= 0) {
+
 			/*jshint plusplus:false*/
 			ii = l-(i--);
-			_Q.when( f(a[ii], ii, a) ).then(function() {
+
+			_Q.when( f(a[ii], ii, a) ).then(function(r) {
+				if(r) {
+					a2[n++] = a[ii];
+				}
 				_immediate = setImmediate(step);
 			}).fail(_reject).done();
 		} else {
@@ -62,6 +67,6 @@ function async_array_forEach(a, f) {
 }
 
 // Exports
-module.exports = async_array_forEach;
+module.exports = async_array_filter;
 
 /* EOF */

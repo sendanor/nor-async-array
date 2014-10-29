@@ -62,25 +62,26 @@ describe('nor-array', function(){
 	describe('#filter', function(){
 
 		/** Normal test */
-		it.skip('can be used to filter elements from a to b', function(){
+		it('can be used to filter elements from a to b', function(){
 			var a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
 			function step(v) {
 				return v >= 16;
 			}
 
-			var b = ARR(a).filter(step).valueOf();
+			return ARR(a).filter(step).then(function(b) {
 
-			assert.strictEqual( a.length, 32 );
-			assert.strictEqual( b.length, 16 );
+				assert.strictEqual( a.length, 32 );
+				assert.strictEqual( b.length, 16 );
 
-			for(var i=0; i<32; i++) {
-				assert.strictEqual( a[i], i );
-			}
+				for(var i=0; i<32; i++) {
+					assert.strictEqual( a[i], i );
+				}
 
-			for(var i=0; i<16; i++) {
-				assert.strictEqual( b[i], 16+i );
-			}
+				for(var i=0; i<16; i++) {
+					assert.strictEqual( b[i], 16+i );
+				}
+			});
 
 		});
 
@@ -90,7 +91,7 @@ describe('nor-array', function(){
 	describe('#every', function(){
 
 		/** Normal test */
-		it.skip('can be used to test array elements', function(){
+		it('can be used to test array elements', function(){
 			var a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
 			assert.strictEqual( a.length, 32 );
@@ -98,15 +99,15 @@ describe('nor-array', function(){
 				assert.strictEqual( a[i], i );
 			}
 
-			var b;
-
-			b = ARR(a).every(function(v) { return v >= 16; });
-			assert.strictEqual( a.length, 32 );
-			assert.strictEqual( b, false );
-
-			b = ARR(a).every(function(v) { return v >= 0; });
-			assert.strictEqual( a.length, 32 );
-			assert.strictEqual( b, true );
+			return ARR(a).every(function(v) { return v >= 16; }).then(function(b) {
+				assert.strictEqual( a.length, 32 );
+				assert.strictEqual( b, false );
+			}).then(function() {
+				return ARR(a).every(function(v) { return v >= 0; }).then(function(b) {
+					assert.strictEqual( a.length, 32 );
+					assert.strictEqual( b, true );
+				});
+			});
 
 		});
 
@@ -116,7 +117,7 @@ describe('nor-array', function(){
 	describe('#some', function(){
 
 		/** Normal test */
-		it.skip('can find some elements', function(){
+		it('can find some elements', function(){
 			var a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
 
 			assert.strictEqual( a.length, 32 );
@@ -126,13 +127,15 @@ describe('nor-array', function(){
 
 			var b;
 
-			b = ARR(a).some(function(v) { return v >= 16; });
-			assert.strictEqual( a.length, 32 );
-			assert.strictEqual( b, true );
-
-			b = ARR(a).some(function(v) { return v >= 100; });
-			assert.strictEqual( a.length, 32 );
-			assert.strictEqual( b, false );
+			return ARR(a).some(function(v) { return v >= 16; }).then(function(b) {
+				assert.strictEqual( a.length, 32 );
+				assert.strictEqual( b, true );
+			}).then(function() {
+				return ARR(a).some(function(v) { return v >= 100; }).then(function(b) {
+					assert.strictEqual( a.length, 32 );
+					assert.strictEqual( b, false );
+				});
+			});
 
 		});
 

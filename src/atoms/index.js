@@ -7,6 +7,9 @@
 
 var async_forEach = require('./forEach.js');
 var async_map = require('./map.js');
+var async_filter = require('./filter.js');
+var async_every = require('./every.js');
+var async_some = require('./some.js');
 
 /** The array instance init
  * @param a {array} The data to perform operations
@@ -15,7 +18,10 @@ var async_map = require('./map.js');
 function async_array(a) {
 	return {
 		'forEach': async_forEach.bind(undefined, a),
-		'map': async_map.bind(undefined, a)
+		'map': async_map.bind(undefined, a),
+		'filter': async_filter.bind(undefined, a),
+		'every': async_every.bind(undefined, a),
+		'some': async_some.bind(undefined, a)
 	};
 }
 
