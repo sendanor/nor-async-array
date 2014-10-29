@@ -1,0 +1,45 @@
+{
+  "name": "nor-async-array",
+  "version": "0.1.5",
+  "description": "Asynchronous Array Utility Library",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "npm run test-spec",
+    "test-dot": "mocha -u bdd -c -R dot tests/test-*.js",
+    "test-list": "mocha -u bdd -c -R list tests/test-*.js",
+    "test-spec": "mocha -u bdd -c -R spec tests/test-*.js",
+    "test-progress": "mocha -u bdd -c -R progress tests/test-*.js",
+    "test-min": "mocha -u bdd -c -R min tests/test-*.js",
+    "test-markdown": "mocha -u bdd -c -R markdown tests/test-*.js",
+    "lint": "node-lint src/ --config=lint.json",
+    "jshint": "jshint src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sendanor/nor-async-array.git"
+  },
+  "keywords": [
+    "array",
+    "forEach",
+    "map",
+    "filter"
+  ],
+  "author": "Jaakko-Heikki Heusala <jheusala@iki.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sendanor/nor-async-array/issues"
+  },
+  "dependencies": {
+    "q": ">= 1.0.1 < 1.1.0"
+  },
+  "devDependencies": {
+    "mocha"        : "*"
+  },
+  "optionalDependencies": {
+    "lint"         : "*",
+    "jshint"       : "*",
+    "benchmark"    : "*",
+    "microtime"    : "*"
+  },
+  "homepage": "https://github.com/sendanor/nor-async-array"
+}
