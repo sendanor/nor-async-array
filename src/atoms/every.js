@@ -12,12 +12,15 @@ var _Q = require('q');
  * @param f {function} The function to call for each item
  * @returns Chainable promise of new array
  */
-function async_array_every(a, f) {
+function async_array_every(a, opts, f) {
 	var defer = _Q.defer();
 	var _immediate;
 	var step;
 
-	// Original
+	var steps_per_tick = opts.steps;
+	var _time = opts.time;
+	var _min_steps = opts.min_steps;
+
 	var l = a.length-1;
 	var i = l;
 	var ii = 0;
@@ -36,18 +39,36 @@ function async_array_every(a, f) {
 
 	/** The actual work to do each tick */
 	function _step() {
-		if(i >= 0) {
+		//console.log("steps_per_tick = " + steps_per_tick);
+		var limit = i - steps_per_tick;
+		if(limit < 0) { limit = 0; }
+
+		var time = process.hrtime();
+		while(i >= limit) {
 			/*jshint plusplus:false*/
 			ii = l-(i--);
-			_Q.when( f(a[ii], ii, a) ).then(function(r) {
-				if(!r) {
-					return _resolve(false);
-				}
-				_immediate = setImmediate(step);
-			}).fail(_reject).done();
-		} else {
+			var r = f(a[ii], ii, a);
+			if(!r) {
+				return _resolve(false);
+			}
+		}
+
+		if(i < 0) {
 			return _resolve(true);
 		}
+
+		// Dynamic step calibration
+		var diff = process.hrtime(time);
+		diff = (diff[0] * 1e9 + diff[1]) / steps_per_tick; // diff will be nanoseconds of avarage step
+		//console.log("nanoseconds per step = " + diff);
+		if(diff >= 1) {
+			steps_per_tick = Math.round( _time / diff ); // Calculate new optimal steps_per_tick (for 5 millisecond steps)
+			if(steps_per_tick < _min_steps) {
+				steps_per_tick = _min_steps;
+			}
+		}
+
+		_immediate = setImmediate(step);
 	}
 
 	/** We have try-catch as its own function because of v8 JIT optimizations */
