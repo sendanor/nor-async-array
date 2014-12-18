@@ -10,6 +10,7 @@ var async_map = require('./map.js');
 var async_filter = require('./filter.js');
 var async_every = require('./every.js');
 var async_some = require('./some.js');
+var FUNCTION = require('nor-function');
 
 /** The array instance init
  * @param a {array} The data to perform operations
@@ -33,11 +34,11 @@ function async_array(a, opts) {
 	opts.min_steps = 1;
 
 	return {
-		'forEach': async_forEach.bind(undefined, a, opts),
-		'map': async_map.bind(undefined, a, opts),
-		'filter': async_filter.bind(undefined, a, opts),
-		'every': async_every.bind(undefined, a, opts),
-		'some': async_some.bind(undefined, a, opts)
+		'forEach': FUNCTION(async_forEach).curry(a, opts),
+		'map'    : FUNCTION(async_map).curry(a, opts),
+		'filter' : FUNCTION(async_filter).curry(a, opts),
+		'every'  : FUNCTION(async_every).curry(a, opts),
+		'some'   : FUNCTION(async_some).curry(a, opts)
 	};
 }
 
